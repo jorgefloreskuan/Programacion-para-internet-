@@ -1,58 +1,132 @@
+/* Tipografía moderna */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
+    font-family: 'Poppins', sans-serif;
+    background-color: #0f172a; /* Fondo azul oscuro profundo */
+    color: #e2e8f0; /* Texto claro */
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
+    padding: 20px;
 }
 
 .game-container {
-    background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    max-width: 400px;
+    background: #1e293b; /* Contenedor oscuro */
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* Sombra fuerte para profundidad */
+    max-width: 450px;
     width: 100%;
     text-align: center;
+    border: 2px solid #334155; /* Borde sutil */
 }
 
-h1 { color: #333; }
-
-.form { margin: 20px 0; }
-
-input {
-    padding: 10px;
-    width: 60px;
-    border: 2px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
+h1 {
+    color: #a78bfa; /* Título violeta neón */
+    margin-top: 0;
+    font-weight: 700;
+    letter-spacing: 1px;
 }
 
+p {
+    line-height: 1.6;
+    color: #94a3b8; /* Texto secundario más apagado */
+}
+
+.form {
+    margin: 30px 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Input estilizado */
+input[type="number"] {
+    padding: 12px;
+    width: 90px;
+    background-color: #0f172a; /* Input oscuro */
+    border: 2px solid #475569;
+    color: #a78bfa; /* Texto violeta dentro del input */
+    border-radius: 12px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+/* Efecto al hacer click en el input */
+input[type="number"]:focus {
+    outline: none;
+    border-color: #a78bfa;
+    box-shadow: 0 0 15px rgba(167, 139, 250, 0.3);
+}
+
+/* Botones principales */
 button {
-    padding: 10px 20px;
-    background-color: #2ecc71;
+    padding: 14px 28px;
+    background-color: #8b5cf6; /* Botón Violeta vibrante */
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 12px;
     cursor: pointer;
     font-size: 1rem;
-    transition: 0.3s;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 0 #6d28d9; /* Efecto 3D */
 }
 
-button:hover { background-color: #27ae60; }
+button:hover {
+    background-color: #7c3aed;
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #6d28d9;
+}
+
+button:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+
+/* Área de resultados */
+.resultParas { margin-top: 30px; }
 
 .resultParas p {
-    padding: 10px;
-    border-radius: 4px;
+    padding: 15px;
+    border-radius: 12px;
+    margin: 12px 0;
+    font-weight: 600;
 }
 
-.lastResult { color: white; }
-.success { background-color: #2ecc71; }
-.error { background-color: #e74c3c; }
+/* Intentos anteriores */
+.guesses {
+    background-color: #334155;
+    color: #e2e8f0;
+    font-family: monospace; /* Fuente tipo terminal para los números */
+    letter-spacing: 3px;
+}
 
+/* Mensajes de éxito y error */
+.lastResult { color: white; font-size: 1.1rem; }
+.success { background-color: #22c55e; box-shadow: 0 0 20px rgba(34, 197, 94, 0.4); } /* Verde Neón */
+.error { background-color: #ef4444; box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);} /* Rojo Neón */
+
+/* Mensaje de ayuda (alto/bajo) */
+.lowOrHi {
+    background-color: transparent;
+    color: #facc15; /* Amarillo vibrante */
+    font-size: 1.1rem;
+    padding: 5px !important;
+}
+
+/* Botón de reinicio */
 #resetButton {
     margin-top: 20px;
-    background-color: #3498db;
+    background-color: #06b6d4; /* Botón Cian para diferenciarlo */
+    box-shadow: 0 4px 0 #0891b2;
+    color: #0f172a; /* Texto oscuro para contraste */
 }
+
+#resetButton:hover { background-color: #0891b2; }
