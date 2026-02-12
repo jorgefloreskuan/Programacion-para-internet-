@@ -63,3 +63,15 @@ app.delete('/api/transacciones/:id', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en puerto ${PORT}`);
 });
+
+const express = require('express');
+const app = express();
+const path = require('path');
+
+// Esta línea es la clave: Le dice al servidor que busque archivos en la carpeta "public"
+app.use(express.static('public'));
+
+// Iniciar el servidor en el puerto 3000
+app.listen(3000, () => {
+    console.log('Servidor corriendo en http://localhost:3000');
+});
