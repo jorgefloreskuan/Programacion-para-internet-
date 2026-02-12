@@ -3,121 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Gastos</title>
+    <title>Finanzas Personales Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
-        /* ESTILOS (CSS) - Para que se vea bonito */
-        body { font-family: sans-serif; background-color: #f7f7f7; display: flex; justify-content: center; min-height: 100vh; margin: 0; }
-        .contenedor { background: white; width: 350px; padding: 20px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-top: 50px; height: fit-content; }
-        
-        h2 { text-align: center; margin: 0 0 20px 0; color: #333; }
-        
-        .balance-box { text-align: center; margin-bottom: 20px; }
-        #balance { font-size: 2em; font-weight: bold; margin: 0; }
-        
-        /* Lista de gastos */
-        ul { list-style: none; padding: 0; margin-bottom: 20px; max-height: 200px; overflow-y: auto; }
-        li { background: #fff; border-bottom: 1px solid #eee; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
-        li.plus { border-right: 5px solid #2ecc71; } /* Borde verde para ingresos */
-        li.minus { border-right: 5px solid #e74c3c; } /* Borde rojo para gastos */
-        
-        /* Botón de borrar */
-        .btn-borrar { background: #e74c3c; color: white; border: none; padding: 5px 8px; cursor: pointer; border-radius: 3px; font-size: 12px; margin-left: 10px; }
-
-        /* Formulario */
-        input { width: 90%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; display: block; margin-left: auto; margin-right: auto;}
-        button.btn-agregar { width: 96%; padding: 10px; background: #3498db; color: white; border: none; cursor: pointer; border-radius: 5px; font-size: 16px; display: block; margin: 0 auto; }
-        button.btn-agregar:hover { background: #2980b9; }
+        body { background-color: #f8f9fa; }
+        .card { border: none; shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 15px; }
+        .bg-gradient-primary { background: linear-gradient(45deg, #4e73df, #224abe); color: white; }
+        .saldo-box { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; }
+        .list-group-item { border-left: 5px solid transparent; transition: all 0.2s; }
+        .list-group-item:hover { transform: translateX(5px); }
+        .tipo-ingreso { border-left-color: #1cc88a !important; }
+        .tipo-gasto { border-left-color: #e74a3b !important; }
     </style>
 </head>
-<body>
+<body class="py-4">
 
-    <div class="contenedor">
-        <h2>💰 Mis Finanzas</h2>
-        
-        <div class="balance-box">
-            <h4>Saldo Total</h4>
-            <h1 id="balance">$0.00</h1>
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="display-5 fw-bold text-secondary"><i class="fas fa-wallet text-primary"></i> Mi Billetera Inteligente</h1>
+            <p class="text-muted">Control de gastos, ingresos y estadísticas</p>
         </div>
-
-        <h3>Historial</h3>
-        <ul id="lista">
-            </ul>
-
-        <h3>Agregar Nuevo</h3>
-        <form id="formulario">
-            <input type="text" id="texto" placeholder="Ej: Pizza, Sueldo..." required>
-            <input type="number" id="cantidad" placeholder="Monto (negativo para gasto: -50)" required>
-            <button class="btn-agregar">Agregar Transacción</button>
-        </form>
     </div>
 
-    <script>
-        // LÓGICA (JAVASCRIPT) - Conecta con el servidor
-        const balanceEl = document.getElementById('balance');
-        const listaEl = document.getElementById('lista');
-        const formulario = document.getElementById('formulario');
-        const textoInput = document.getElementById('texto');
-        const cantidadInput = document.getElementById('cantidad');
+    <div class="row g-4 mb-4">
+        <div class="col-md-5">
+            <div class="card h-100 p-3 shadow-sm">
+                <div class="saldo-box mb-4">
+                    <h5 class="text-muted text-uppercase small">Saldo Actual</h5>
+                    <h1 class="display-4 fw-bold" id="balance">$0.00</h1>
+                    <div class="d-flex justify-content-between mt-3 px-4">
+                        <div class="text-success">
+                            <i class="fas fa-arrow-up"></i> <span id="total-ingresos">$0.00</span>
+                        </div>
+                        <div class="text-danger">
+                            <i class="fas fa-arrow-down"></i> <span id="total-gastos">$0.00</span>
+                        </div>
+                    </div>
+                </div>
 
-        // 1. Función para cargar datos del servidor
-        async function cargarDatos() {
-            const respuesta = await fetch('/api/transacciones'); // Pide datos al backend
-            const datos = await respuesta.json();
+                <h5 class="mb-3"><i class="fas fa-plus-circle"></i> Nueva Transacción</h5>
+                <form id="formulario">
+                    <div class="mb-3">
+                        <label class="form-label">Descripción</label>
+                        <input type="text" class="form-control" id="texto" placeholder="Ej: Nómina, Renta, Netflix..." required>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label class="form-label">Monto</label>
+                            <input type="number" class="form-control" id="cantidad" placeholder="-500 o 1000" required>
+                            <small class="text-muted">Negativo = Gasto</small>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label">Fecha</label>
+                            <input type="date" class="form-control" id="fecha" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow">Agregar</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="card h-100 p-4 shadow-sm">
+                <h5 class="mb-4">Resumen Visual</h5>
+                <div style="height: 300px; display: flex; justify-content: center;">
+                    <canvas id="miGrafica"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card p-4 shadow-sm">
+                <h4 class="mb-3">Historial Reciente</h4>
+                <ul id="lista" class="list-group list-group-flush">
+                    </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Referencias
+    const balanceEl = document.getElementById('balance');
+    const ingresosEl = document.getElementById('total-ingresos');
+    const gastosEl = document.getElementById('total-gastos');
+    const listaEl = document.getElementById('lista');
+    const formulario = document.getElementById('formulario');
+    const fechaInput = document.getElementById('fecha');
+    
+    // Configuración de la Gráfica
+    let myChart; // Variable global para la gráfica
+
+    // Poner fecha de hoy por defecto
+    fechaInput.valueAsDate = new Date();
+
+    // 1. CARGAR DATOS
+    async function cargarDatos() {
+        const res = await fetch('/api/transacciones');
+        const datos = await res.json();
+        actualizarUI(datos);
+    }
+
+    // 2. ACTUALIZAR INTERFAZ
+    function actualizarUI(transacciones) {
+        listaEl.innerHTML = '';
+        
+        let total = 0;
+        let ingresos = 0;
+        let gastos = 0;
+
+        // Ordenar por fecha (más reciente primero)
+        transacciones.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+        transacciones.forEach(t => {
+            const montoNum = parseFloat(t.monto);
+            total += montoNum;
+
+            if(montoNum > 0) ingresos += montoNum;
+            else gastos += Math.abs(montoNum);
+
+            // Crear elemento de lista
+            const item = document.createElement('li');
+            item.className = `list-group-item d-flex justify-content-between align-items-center ${montoNum >= 0 ? 'tipo-ingreso' : 'tipo-gasto'}`;
             
-            mostrarEnPantalla(datos);
-        }
+            // Formatear fecha
+            const fechaFormateada = new Date(t.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
 
-        // 2. Función para mostrar datos en HTML
-        function mostrarEnPantalla(transacciones) {
-            listaEl.innerHTML = ''; // Limpiar lista
-            let total = 0;
-
-            transacciones.forEach(t => {
-                const item = document.createElement('li');
-                // Añadir clase 'plus' o 'minus' según si es positivo o negativo
-                item.classList.add(t.monto < 0 ? 'minus' : 'plus');
-                
-                item.innerHTML = `
-                    ${t.texto} 
-                    <span>${t.monto < 0 ? '-' : '+'}$${Math.abs(t.monto)}</span>
-                    <button class="btn-borrar" onclick="borrarTransaccion(${t.id})">X</button>
-                `;
-                
-                listaEl.appendChild(item);
-                total += t.monto;
-            });
-
-            balanceEl.innerText = `$${total.toFixed(2)}`;
-        }
-
-        // 3. Función para enviar nuevo dato
-        formulario.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Evitar que se recargue la página
-
-            const nuevoDato = {
-                texto: textoInput.value,
-                monto: cantidadInput.value
-            };
-
-            await fetch('/api/transacciones', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(nuevoDato)
-            });
-
-            textoInput.value = '';
-            cantidadInput.value = '';
-            cargarDatos(); // Recargar la lista
+            item.innerHTML = `
+                <div class="d-flex flex-column">
+                    <span class="fw-bold text-dark">${t.texto}</span>
+                    <small class="text-muted"><i class="far fa-calendar-alt"></i> ${fechaFormateada}</small>
+                </div>
+                <div>
+                    <span class="fw-bold fs-5 ${montoNum >= 0 ? 'text-success' : 'text-danger'}">
+                        ${montoNum >= 0 ? '+' : '-'}$${Math.abs(montoNum).toFixed(2)}
+                    </span>
+                    <button class="btn btn-sm btn-outline-danger ms-3 border-0" onclick="eliminar(${t.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            listaEl.appendChild(item);
         });
 
-        // 4. Función para borrar
-        async function borrarTransaccion(id) {
+        // Actualizar textos
+        balanceEl.innerText = `$${total.toFixed(2)}`;
+        ingresosEl.innerText = `+$${ingresos.toFixed(2)}`;
+        gastosEl.innerText = `-$${gastos.toFixed(2)}`;
+
+        // Actualizar Gráfica
+        actualizarGrafica(ingresos, gastos);
+    }
+
+    // 3. LOGICA DE GRÁFICA (Chart.js)
+    function actualizarGrafica(ingresos, gastos) {
+        const ctx = document.getElementById('miGrafica').getContext('2d');
+        
+        if (myChart) {
+            myChart.destroy(); // Destruir la anterior para crear nueva
+        }
+
+        myChart = new Chart(ctx, {
+            type: 'doughnut', // Tipo "Dona"
+            data: {
+                labels: ['Ingresos', 'Gastos'],
+                datasets: [{
+                    data: [ingresos, gastos],
+                    backgroundColor: ['#1cc88a', '#e74a3b'],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    }
+
+    // 4. GUARDAR TRANSACCIÓN
+    formulario.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const nuevoDato = {
+            texto: document.getElementById('texto').value,
+            monto: document.getElementById('cantidad').value,
+            fecha: document.getElementById('fecha').value
+        };
+
+        await fetch('/api/transacciones', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(nuevoDato)
+        });
+
+        document.getElementById('texto').value = '';
+        document.getElementById('cantidad').value = '';
+        cargarDatos();
+    });
+
+    // 5. ELIMINAR
+    async function eliminar(id) {
+        if(confirm('¿Estás seguro de borrar esto?')) {
             await fetch(`/api/transacciones/${id}`, { method: 'DELETE' });
             cargarDatos();
         }
+    }
 
-        // Iniciar app cargando datos
-        cargarDatos();
-    </script>
+    // Iniciar
+    cargarDatos();
+</script>
+
 </body>
 </html>
