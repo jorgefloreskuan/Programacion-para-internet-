@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Gastos</title>
+    <style>
+        /* ESTILOS (CSS) - Para que se vea bonito */
+        body { font-family: sans-serif; background-color: #f7f7f7; display: flex; justify-content: center; min-height: 100vh; margin: 0; }
+        .contenedor { background: white; width: 350px; padding: 20px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-top: 50px; height: fit-content; }
+        
+        h2 { text-align: center; margin: 0 0 20px 0; color: #333; }
+        
+        .balance-box { text-align: center; margin-bottom: 20px; }
+        #balance { font-size: 2em; font-weight: bold; margin: 0; }
+        
+        /* Lista de gastos */
+        ul { list-style: none; padding: 0; margin-bottom: 20px; max-height: 200px; overflow-y: auto; }
+        li { background: #fff; border-bottom: 1px solid #eee; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
+        li.plus { border-right: 5px solid #2ecc71; } /* Borde verde para ingresos */
+        li.minus { border-right: 5px solid #e74c3c; } /* Borde rojo para gastos */
+        
+        /* Botón de borrar */
+        .btn-borrar { background: #e74c3c; color: white; border: none; padding: 5px 8px; cursor: pointer; border-radius: 3px; font-size: 12px; margin-left: 10px; }
+
+        /* Formulario */
+        input { width: 90%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; display: block; margin-left: auto; margin-right: auto;}
+        button.btn-agregar { width: 96%; padding: 10px; background: #3498db; color: white; border: none; cursor: pointer; border-radius: 5px; font-size: 16px; display: block; margin: 0 auto; }
+        button.btn-agregar:hover { background: #2980b9; }
+    </style>
+</head>
+<body>
+
+    <div class="contenedor">
+        <h2>💰 Mis Finanzas</h2>
+        
+        <div class="balance-box">
+            <h4>Saldo Total</h4>
+            <h1 id="balance">$0.00</h1>
+        </div>
+
+        <h3>Historial</h3>
+        <ul id="lista">
+            </ul>
+
+        <h3>Agregar Nuevo</h3>
+        <form id="formulario">
+            <input type="text" id="texto" placeholder="Ej: Pizza, Sueldo..." required>
+            <input type="number" id="cantidad" placeholder="Monto (negativo para gasto: -50)" required>
+            <button class="btn-agregar">Agregar Transacción</button>
+        </form>
+    </div>
+
+    <script>
+        // LÓGICA (JAVASCRIPT) - Conecta con el servidor
+        const balanceEl = document.getElementById('balance');
+        const listaEl = document.getElementById('lista');
+        const formulario = document.getElementById('formulario');
+        const textoInput = document.getElementById('texto');
+        const cantidadInput = document.getElementById('cantidad');
+
+        // 1. Función para cargar datos del servidor
+        async function cargarDatos() {
+            const respuesta = await fetch('/api/transacciones'); // Pide datos al backend
+            const datos = await respuesta.json();
+            
+            mostrarEnPantalla(datos);
+        }
+
+        // 2. Función para mostrar datos en HTML
+        function mostrarEnPantalla(transacciones) {
+            listaEl.innerHTML = ''; // Limpiar lista
+            let total = 0;
+
+            transacciones.forEach(t => {
+                const item = document.createElement('li');
+                // Añadir clase 'plus' o 'minus' según si es positivo o negativo
+                item.classList.add(t.monto < 0 ? 'minus' : 'plus');
+                
+                item.innerHTML = `
+                    ${t.texto} 
+                    <span>${t.monto < 0 ? '-' : '+'}$${Math.abs(t.monto)}</span>
+                    <button class="btn-borrar" onclick="borrarTransaccion(${t.id})">X</button>
+                `;
+                
+                listaEl.appendChild(item);
+                total += t.monto;
+            });
+
+            balanceEl.innerText = `$${total.toFixed(2)}`;
+        }
+
+        // 3. Función para enviar nuevo dato
+        formulario.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Evitar que se recargue la página
+
+            const nuevoDato = {
+                texto: textoInput.value,
+                monto: cantidadInput.value
+            };
+
+            await fetch('/api/transacciones', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(nuevoDato)
+            });
+
+            textoInput.value = '';
+            cantidadInput.value = '';
+            cargarDatos(); // Recargar la lista
+        });
+
+        // 4. Función para borrar
+        async function borrarTransaccion(id) {
+            await fetch(`/api/transacciones/${id}`, { method: 'DELETE' });
+            cargarDatos();
+        }
+
+        // Iniciar app cargando datos
+        cargarDatos();
+    </script>
+</body>
+</html>
