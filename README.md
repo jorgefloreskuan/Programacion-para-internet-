@@ -27,7 +27,8 @@ Una aplicación web moderna para descubrir películas y series populares, buscar
 
 ## 📸 Capturas de Pantalla
 
-<img width="1920" height="1079" alt="image" src="https://github.com/user-attachments/assets/da58b617-2130-4ad8-85d5-0f470a85da76" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/3c9c5af2-0dd2-4137-9b38-371010d1d525" />
+
 
 
 ## 🚀 Demo en Vivo
