@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // IMPORTANTE: Regístrate en https://www.themoviedb.org/ para obtener tu API key
 // Luego reemplaza 'TU_API_KEY_AQUI' con tu clave real
-const API_KEY = import.meta.env.VITE_TMDB_API_KEY
+const API_KEY = '94ee4a5be7e627bff9f3a99c1d81165e'
 const BASE_URL = 'https://api.themoviedb.org/3'
 
 const api = axios.create({
