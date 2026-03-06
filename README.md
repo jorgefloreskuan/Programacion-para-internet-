@@ -47,7 +47,7 @@ Sigue estos pasos para tener el proyecto en local:
 
 ```bash
 # Clonar el repositorio
-git clone https://github.com/tu-usuario/tu-repositorio.git
+git clone https://github.com/jorgefloreskuan/Programacion-para-internet-.git
 
 # Entrar al directorio
 cd tu-repositorio
